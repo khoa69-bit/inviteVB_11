@@ -4,16 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thư Mời Triển Lãm Quốc Tế VietBuild</title>
-    <!-- Tailwind CSS CDN -->
+
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Montserrat & Playfair Display -->
+
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons -->
+
+    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Montserrat', sans-serif;
             background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
@@ -25,28 +32,23 @@
             font-family: 'Playfair Display', serif;
         }
 
-        /* Particles Canvas Styling */
-        #particles-canvas {
+        #particles-canvas,
+        #confetti-canvas {
             position: fixed;
-            top: 0;
-            left: 0;
+            inset: 0;
             width: 100%;
             height: 100%;
             pointer-events: none;
+        }
+
+        #particles-canvas {
             z-index: 1;
         }
 
         #confetti-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 50;
+            z-index: 60;
         }
 
-        /* 3D Envelope Container */
         .envelope-wrapper {
             perspective: 1000px;
             cursor: pointer;
@@ -57,9 +59,11 @@
             position: relative;
             width: 340px;
             height: 230px;
-            background: #b91c1c; /* Gold/Red VietBuild Scheme */
+            background: #b91c1c;
             border-radius: 12px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(234, 179, 8, 0.2);
+            box-shadow:
+                0 20px 40px rgba(0, 0, 0, 0.6),
+                0 0 30px rgba(234, 179, 8, 0.2);
             transition: transform 0.6s ease, box-shadow 0.6s ease;
             transform-style: preserve-3d;
         }
@@ -73,10 +77,11 @@
 
         .envelope:hover {
             transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7), 0 0 40px rgba(234, 179, 8, 0.4);
+            box-shadow:
+                0 25px 50px rgba(0, 0, 0, 0.7),
+                0 0 40px rgba(234, 179, 8, 0.4);
         }
 
-        /* Flap 3D styling */
         .envelope .flap {
             position: absolute;
             top: 0;
@@ -96,13 +101,17 @@
             z-index: 1;
         }
 
-        /* Envelope Pocket Details */
-        .envelope .pocket-left {
+        .envelope .pocket-left,
+        .envelope .pocket-right,
+        .envelope .pocket-bottom {
             position: absolute;
-            top: 0;
-            left: 0;
             width: 100%;
             height: 100%;
+        }
+
+        .envelope .pocket-left {
+            top: 0;
+            left: 0;
             background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%);
             clip-path: polygon(0 0, 50% 50%, 0 100%);
             z-index: 3;
@@ -110,11 +119,8 @@
         }
 
         .envelope .pocket-right {
-            position: absolute;
             top: 0;
             right: 0;
-            width: 100%;
-            height: 100%;
             background: linear-gradient(-135deg, #b91c1c 0%, #7f1d1d 100%);
             clip-path: polygon(100% 0, 50% 50%, 100% 100%);
             z-index: 3;
@@ -122,18 +128,14 @@
         }
 
         .envelope .pocket-bottom {
-            position: absolute;
             bottom: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
             background: linear-gradient(0deg, #991b1b 0%, #b91c1c 100%);
             clip-path: polygon(0 100%, 50% 45%, 100% 100%);
             z-index: 4;
             border-radius: 0 0 12px 12px;
         }
 
-        /* Wax Seal Stamp */
         .seal {
             position: absolute;
             top: 50%;
@@ -146,7 +148,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.6);
+            box-shadow:
+                0 4px 10px rgba(0,0,0,0.5),
+                inset 0 2px 4px rgba(255,255,255,0.6);
             z-index: 6;
             transition: opacity 0.4s ease, transform 0.4s ease;
             border: 2px solid #fef08a;
@@ -158,7 +162,6 @@
             pointer-events: none;
         }
 
-        /* Letter Inside */
         .letter-preview {
             position: absolute;
             bottom: 12px;
@@ -182,7 +185,6 @@
             transform: translateY(-120px) scale(1.05);
         }
 
-        /* Full Letter Modal Styling */
         .letter-modal {
             transition: opacity 0.5s ease, visibility 0.5s ease;
             backdrop-filter: blur(8px);
@@ -191,153 +193,189 @@
         .letter-card {
             background: radial-gradient(circle at top left, #ffffff, #fffdf7);
             border: 2px solid #eab308;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 20px rgba(234, 179, 8, 0.2);
+            box-shadow:
+                0 25px 50px -12px rgba(0, 0, 0, 0.5),
+                0 0 20px rgba(234, 179, 8, 0.2);
             transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* Gold Gradient Text */
         .text-gold-gradient {
             background: linear-gradient(135deg, #ca8a04 0%, #eab308 50%, #854d0e 100%);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .bg-gold-gradient {
-            background: linear-gradient(135deg, #d97706 0%, #f59e0b 50%, #b45309 100%);
-        }
-
-        /* Custom Scrollbar for Letter Modal */
         .custom-scroll::-webkit-scrollbar {
             width: 6px;
         }
+
         .custom-scroll::-webkit-scrollbar-track {
             background: #f1f1f1;
             border-radius: 4px;
         }
+
         .custom-scroll::-webkit-scrollbar-thumb {
             background: #cbd5e1;
             border-radius: 4px;
         }
+
         .custom-scroll::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
+
+        @media (max-width: 639px) {
+            .envelope {
+                width: min(340px, 88vw);
+                height: min(230px, 60vw);
+            }
+
+            .envelope.open .letter-preview {
+                transform: translateY(-80px) scale(1.03);
+            }
+        }
     </style>
 </head>
+
 <body class="flex items-center justify-center min-h-screen p-4 text-slate-100 relative">
 
-    <!-- Background Particles Canvas -->
     <canvas id="particles-canvas"></canvas>
-    <!-- Confetti Fireworks Canvas -->
     <canvas id="confetti-canvas"></canvas>
 
-    <!-- Main Interactive Area -->
+    <!-- Main -->
     <div class="relative z-10 flex flex-col items-center justify-center w-full max-w-4xl mx-auto text-center">
-        
-        <!-- Header Banner -->
-        <div class="mb-8 space-y-2 animate-fade-in">
+
+        <div class="mb-8 space-y-2">
             <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 text-xs sm:text-sm font-semibold tracking-wider uppercase mb-2">
-                <i class="fa-solid fa-star"></i> Triển Lãm Quốc Tế VietBuild <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                Triển Lãm Quốc Tế VietBuild
+                <i class="fa-solid fa-star"></i>
             </div>
+
             <h1 class="text-3xl sm:text-5xl font-bold tracking-tight text-white font-serif-title drop-shadow-md">
                 THƯ MỜI TRÂN TRỌNG
             </h1>
+
             <p class="text-slate-300 text-sm sm:text-base max-w-md mx-auto">
                 Chương trình Xúc tiến Thương mại & Kết nối Doanh nghiệp 2026
             </p>
         </div>
 
-        <!-- 3D Envelope -->
+        <!-- Envelope -->
         <div class="envelope-wrapper my-6" id="envelopeWrapper" onclick="openEnvelope()">
             <div class="envelope" id="envelope">
                 <div class="flap"></div>
                 <div class="pocket-left"></div>
                 <div class="pocket-right"></div>
                 <div class="pocket-bottom"></div>
-                
-                <!-- Wax Seal -->
+
                 <div class="seal">
-                    <span class="text-amber-9 font-bold font-serif-title text-xl">VB</span>
+                    <span class="text-amber-900 font-bold font-serif-title text-xl">VB</span>
                 </div>
 
-                <!-- Preview Letter Inside -->
                 <div class="letter-preview">
-                    <div class="text-xs uppercase text-amber-700 font-bold tracking-widest mb-1">VietBuild 2026</div>
-                    <div class="text-sm sm:text-base font-bold text-slate-800 font-serif-title">Thư Mời Hợp Tác</div>
-                    <p class="text-[10px] sm:text-xs text-slate-500 mt-1 line-clamp-2">Kính gửi Quý Doanh Nghiệp tham gia triển lãm...</p>
+                    <div class="text-xs uppercase text-amber-700 font-bold tracking-widest mb-1">
+                        VietBuild 2026
+                    </div>
+                    <div class="text-sm sm:text-base font-bold text-slate-800 font-serif-title">
+                        Thư Mời Hợp Tác
+                    </div>
+                    <p class="text-[10px] sm:text-xs text-slate-500 mt-1">
+                        Kính gửi Quý Doanh Nghiệp tham gia triển lãm...
+                    </p>
                 </div>
             </div>
         </div>
 
-        <!-- Tap Hint Button -->
         <div class="mt-6 flex flex-col items-center gap-2 cursor-pointer" onclick="openEnvelope()">
-            <button class="px-6 py-3 rounded-full bg-gradient-to-r from-yellow-500 to-amber-600 text-slate-950 font-bold text-sm sm:text-base shadow-lg shadow-amber-500/20 hover:shadow-amber-500/40 transform hover:-translate-y-0.5 transition-all flex items-center gap-2 group animate-bounce">
+            <button type="button"
+                class="px-6 py-3 rounded-full bg-gradient-to-r from-yellow-500 to-amber-600 text-slate-950 font-bold text-sm sm:text-base shadow-lg shadow-amber-500/20 hover:shadow-amber-500/40 transform hover:-translate-y-0.5 transition-all flex items-center gap-2 group animate-bounce">
                 <i class="fa-solid fa-envelope-open text-slate-950 transition-transform group-hover:scale-110"></i>
                 <span>NHẤP ĐỂ MỞ THƯ MỜI</span>
             </button>
-            <span class="text-xs text-slate-400 italic">Bật âm thanh thiết bị để có trải nghiệm tốt nhất</span>
+            <span class="text-xs text-slate-400 italic">
+                Bật âm thanh thiết bị để có trải nghiệm tốt nhất
+            </span>
         </div>
     </div>
 
-    <!-- Full Screen Invitation Card Modal -->
-    <div id="letterModal" class="letter-modal fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 opacity-0 pointer-events-none transition-all duration-500">
-        <!-- Backdrop -->
+    <!-- Invitation Modal -->
+    <div id="letterModal"
+        class="letter-modal fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 opacity-0 pointer-events-none transition-all duration-500">
+
         <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-md" onclick="closeEnvelope()"></div>
 
-        <!-- Letter Card Content -->
-        <div id="letterCard" class="letter-card relative w-full max-w-2xl max-h-[90vh] rounded-2xl p-6 sm:p-10 text-slate-800 flex flex-col justify-between overflow-y-auto custom-scroll scale-95 transform transition-transform duration-500">
-            
-            <!-- Close Button -->
-            <button onclick="closeEnvelope()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-800 flex items-center justify-center transition-colors">
+        <div id="letterCard"
+            class="letter-card relative w-full max-w-2xl max-h-[90vh] rounded-2xl p-6 sm:p-10 text-slate-800 flex flex-col justify-between overflow-y-auto custom-scroll scale-95 transform transition-transform duration-500">
+
+            <button type="button" onclick="closeEnvelope()"
+                class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-800 flex items-center justify-center transition-colors">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
 
             <div>
-                <!-- Header Logo & Title -->
                 <div class="text-center border-b border-amber-200/80 pb-5 mb-6">
                     <div class="flex items-center justify-center gap-2 text-red-600 font-extrabold text-2xl sm:text-3xl tracking-wider uppercase font-serif-title">
-                        <i class="fa-solid fa-building-columns text-amber-600"></i> VIETBUILD
+                        <i class="fa-solid fa-building-columns text-amber-600"></i>
+                        VIETBUILD
                     </div>
+
                     <div class="text-xs sm:text-sm font-semibold tracking-widest text-amber-700 uppercase mt-1">
                         BAN TỔ CHỨC TRIỂN LÃM QUỐC TẾ VIETBUILD
                     </div>
                 </div>
 
-                <!-- Recipient -->
                 <div class="mb-4">
-                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Kính gửi:</span>
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">
+                        Kính gửi:
+                    </span>
                     <h2 class="text-xl sm:text-2xl font-bold text-slate-900 font-serif-title text-gold-gradient">
                         Quý Doanh Nghiệp
                     </h2>
                 </div>
 
-                <!-- Letter Body Text -->
                 <div class="space-y-3 text-sm sm:text-base leading-relaxed text-slate-700 text-justify">
                     <p>
-                        Em là <strong class="text-slate-900">Trần Công Khoa</strong>, phụ trách khách hàng doanh nghiệp của Ban Tổ chức Triển lãm VietBuild.
+                        Em là <strong class="text-slate-900">Trần Công Khoa</strong>,
+                        phụ trách khách hàng doanh nghiệp của Ban Tổ chức Triển lãm VietBuild.
                     </p>
+
                     <p>
-                        Sắp tới, VietBuild sẽ tổ chức kỳ <strong class="text-red-700 font-semibold">Triển lãm Quốc tế VietBuild</strong> tại <strong class="text-slate-900">VEC - Trung tâm Triển lãm Việt Nam</strong> (Đường Cầu Tứ Liên, Đông Anh, Hà Nội), dự kiến diễn ra vào <strong>Tháng 11</strong>.
+                        Sắp tới, VietBuild sẽ tổ chức kỳ
+                        <strong class="text-red-700 font-semibold">Triển lãm Quốc tế VietBuild</strong>
+                        tại <strong class="text-slate-900">VEC - Trung tâm Triển lãm Việt Nam</strong>
+                        (Đường Cầu Tứ Liên, Đông Anh, Hà Nội), dự kiến diễn ra vào
+                        <strong>Tháng 11 năm 2026</strong>.
                     </p>
+
                     <p>
-                        Em xin phép liên hệ để tìm hiểu không biết Quý Doanh Nghiệp hiện có kế hoạch tham gia các hoạt động triển lãm, xúc tiến thương mại trong năm nay không ạ?
+                        Em xin phép liên hệ để tìm hiểu không biết Quý Doanh Nghiệp hiện có kế hoạch
+                        tham gia các hoạt động triển lãm, xúc tiến thương mại trong năm nay không ạ?
                     </p>
+
                     <p>
-                        Nếu Quý Doanh Nghiệp quan tâm, em rất mong có cơ hội được trao đổi thêm và gửi đến Quý Doanh nghiệp các thông tin chi tiết về quy mô, ngành hàng trưng bày, chương trình kết nối khách hàng cũng như các chính sách hỗ trợ dành cho doanh nghiệp tham gia VietBuild sắp tới.
+                        Nếu Quý Doanh Nghiệp quan tâm, em rất mong có cơ hội được trao đổi thêm và gửi
+                        đến Quý Doanh nghiệp các thông tin chi tiết về quy mô, ngành hàng trưng bày,
+                        chương trình kết nối khách hàng cũng như các chính sách hỗ trợ dành cho doanh nghiệp
+                        tham gia VietBuild sắp tới.
                     </p>
+
                     <p class="italic text-slate-600">
                         Rất mong nhận được phản hồi từ Quý Doanh Nghiệp.
                     </p>
                 </div>
 
-                <!-- Event Quick Info Badges -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 my-6 pt-4 border-t border-dashed border-amber-200">
+
                     <div class="flex items-start gap-3 p-3 rounded-xl bg-amber-50/80 border border-amber-200/60">
                         <div class="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center shrink-0">
                             <i class="fa-solid fa-location-dot"></i>
                         </div>
                         <div>
                             <div class="text-xs font-semibold text-amber-800">Địa Điểm Tổ Chức</div>
-                            <div class="text-xs text-slate-800 font-medium">VEC - Trung tâm Triển lãm VN, Cầu Tứ Liên, Đông Anh, Hà Nội</div>
+                            <div class="text-xs text-slate-800 font-medium">
+                                VEC - Trung tâm Triển lãm Việt Nam, Cầu Tứ Liên, Đông Anh, Hà Nội
+                            </div>
                         </div>
                     </div>
 
@@ -347,55 +385,69 @@
                         </div>
                         <div>
                             <div class="text-xs font-semibold text-amber-800">Thời Gian Dự Kiến</div>
-                            <div class="text-xs text-slate-800 font-medium">Tháng 11 năm 2026</div>
+                            <div class="text-xs text-slate-800 font-medium">
+                                Tháng 11 năm 2026
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Contact Signature Box -->
                 <div class="bg-gradient-to-r from-red-50 to-amber-50 rounded-xl p-4 border border-amber-200/80 flex flex-col sm:flex-row items-center justify-between gap-4">
+
                     <div class="flex items-center gap-3">
                         <div class="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center font-bold text-lg shadow-md shrink-0">
                             TK
                         </div>
+
                         <div>
                             <div class="font-bold text-slate-900 text-base">Trần Công Khoa</div>
                             <div class="text-xs text-slate-600">Phụ trách Khách hàng Doanh nghiệp</div>
-                            <div class="text-xs font-semibold text-red-700">Ban Tổ chức Triển lãm VietBuild</div>
+                            <div class="text-xs font-semibold text-red-700">
+                                Ban Tổ chức Triển lãm VietBuild
+                            </div>
                         </div>
                     </div>
-                    
+
                     <div class="text-xs space-y-1 w-full sm:w-auto border-t sm:border-t-0 sm:border-l border-amber-200 pt-2 sm:pt-0 sm:pl-4">
-                        <div class="flex items-center gap-2 text-slate-700">
+
+                        <a href="tel:0947529910" class="flex items-center gap-2 text-slate-700 hover:text-red-600">
                             <i class="fa-solid fa-phone text-amber-600 w-4"></i>
                             <span class="font-medium">0947 529 910</span>
-                        </div>
-                        <div class="flex items-center gap-2 text-slate-700">
+                        </a>
+
+                        <a href="mailto:congkhoa.vietbuild@gmail.com" class="flex items-center gap-2 text-slate-700 hover:text-red-600">
                             <i class="fa-solid fa-envelope text-amber-600 w-4"></i>
                             <span class="font-medium">congkhoa.vietbuild@gmail.com</span>
-                        </div>
+                        </a>
                     </div>
                 </div>
             </div>
 
-            <!-- Call to Action Buttons -->
+            <!-- CTA -->
             <div class="mt-8 pt-4 border-t border-slate-100 flex flex-wrap gap-2 justify-center sm:justify-end">
-                <button onclick="copyLetterContent()" class="px-4 py-2.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 font-semibold text-xs sm:text-sm flex items-center gap-2 transition-colors">
+
+                <button type="button" onclick="copyLetterContent()"
+                    class="px-4 py-2.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 font-semibold text-xs sm:text-sm flex items-center gap-2 transition-colors">
                     <i class="fa-regular fa-copy"></i>
                     <span>Sao Chép Thư</span>
                 </button>
 
-                <a href="mailto:congkhoa.vietbuild@gmail.com?subject=Quan%20t%C3%A2m%20Tri%E1%BB%83n%20l%C3%A3m%20VietBuild" class="px-4 py-2.5 rounded-lg bg-slate-800 text-white hover:bg-slate-900 font-semibold text-xs sm:text-sm flex items-center gap-2 transition-colors">
+                <a href="mailto:congkhoa.vietbuild@gmail.com?subject=Quan%20t%C3%A2m%20Tri%E1%BB%83n%20l%C3%A3m%20VietBuild"
+                    class="px-4 py-2.5 rounded-lg bg-slate-800 text-white hover:bg-slate-900 font-semibold text-xs sm:text-sm flex items-center gap-2 transition-colors">
                     <i class="fa-solid fa-envelope"></i>
                     <span>Gửi Email</span>
                 </a>
 
-                <a href="https://zalo.me/0947529910" target="_blank" rel="noopener noreferrer" class="px-4 py-2.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 font-semibold text-xs sm:text-sm flex items-center gap-2 transition-colors shadow-md shadow-blue-500/20">
+                <a href="https://zalo.me/0947529910"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="px-4 py-2.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 font-semibold text-xs sm:text-sm flex items-center gap-2 transition-colors shadow-md shadow-blue-500/20">
                     <i class="fa-solid fa-comment-dots"></i>
                     <span>Liên Hệ Zalo</span>
                 </a>
 
-                <button onclick="openRegisterModal()" class="px-5 py-2.5 rounded-lg bg-gradient-to-r from-red-600 to-amber-600 text-white font-bold text-xs sm:text-sm flex items-center gap-2 hover:opacity-95 transition-all shadow-md shadow-amber-500/30">
+                <button type="button" onclick="openRegisterModal()"
+                    class="px-5 py-2.5 rounded-lg bg-gradient-to-r from-red-600 to-amber-600 text-white font-bold text-xs sm:text-sm flex items-center gap-2 hover:opacity-95 transition-all shadow-md shadow-amber-500/30">
                     <i class="fa-solid fa-paper-plane"></i>
                     <span>Đăng Ký Khảo Sát</span>
                 </button>
@@ -403,43 +455,91 @@
         </div>
     </div>
 
-    <!-- Registration Quick Modal -->
-    <div id="registerModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+    <!-- Registration Modal -->
+    <div id="registerModal"
+        class="fixed inset-0 z-[70] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+
         <div class="absolute inset-0 bg-slate-950/70 backdrop-blur-sm" onclick="closeRegisterModal()"></div>
+
         <div class="relative bg-white rounded-2xl max-w-md w-full p-6 text-slate-800 shadow-2xl z-10">
-            <h3 class="text-xl font-bold font-serif-title text-slate-900 mb-2">Đăng Ký Nhận Thông Tin</h3>
-            <p class="text-xs text-slate-500 mb-4">Vui lòng để lại thông tin, anh Công Khoa sẽ gửi hồ sơ triển lãm chi tiết qua Zalo/Email cho Quý Doanh Nghiệp.</p>
-            
+
+            <button type="button" onclick="closeRegisterModal()"
+                class="absolute top-3 right-3 w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <h3 class="text-xl font-bold font-serif-title text-slate-900 mb-2">
+                Đăng Ký Nhận Thông Tin
+            </h3>
+
+            <p class="text-xs text-slate-500 mb-4">
+                Vui lòng để lại thông tin. Sau khi gửi, hệ thống sẽ mở email để bạn gửi thông tin đến anh Công Khoa.
+            </p>
+
             <form id="regForm" onsubmit="handleFormSubmit(event)" class="space-y-3">
+
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Tên Quý Doanh Nghiệp / Công Ty</label>
-                    <input type="text" required placeholder="VD: Công ty CP Vật Liệu Xây Dựng ABC" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-amber-500">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">
+                        Tên Quý Doanh Nghiệp / Công Ty
+                    </label>
+                    <input id="companyName" type="text" required
+                        placeholder="VD: Công ty CP Vật Liệu Xây Dựng ABC"
+                        class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-amber-500">
                 </div>
+
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Số Điện Thoại / Zalo</label>
-                    <input type="tel" required placeholder="VD: 0912345678" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-amber-500">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">
+                        Số Điện Thoại / Zalo
+                    </label>
+                    <input id="phoneNumber" type="tel" required
+                        placeholder="VD: 0912345678"
+                        class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-amber-500">
                 </div>
+
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Sản Phẩm / Ngành Hàng Trưng Bày</label>
-                    <input type="text" placeholder="VD: Trang trí nội thất, Cửa nhôm, Thiết bị vệ sinh..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-amber-500">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">
+                        Sản Phẩm / Ngành Hàng Trưng Bày
+                    </label>
+                    <input id="industry" type="text"
+                        placeholder="VD: Trang trí nội thất, Cửa nhôm, Thiết bị vệ sinh..."
+                        class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-amber-500">
                 </div>
-                
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">
+                        Email doanh nghiệp (nếu có)
+                    </label>
+                    <input id="companyEmail" type="email"
+                        placeholder="company@example.com"
+                        class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-amber-500">
+                </div>
+
                 <div class="flex justify-end gap-2 pt-3">
-                    <button type="button" onclick="closeRegisterModal()" class="px-4 py-2 rounded-lg bg-slate-100 text-slate-600 text-xs font-semibold hover:bg-slate-200">Hủy</button>
-                    <button type="submit" class="px-5 py-2 rounded-lg bg-red-600 text-white text-xs font-bold hover:bg-red-700 shadow-md">Gửi Đăng Ký</button>
+                    <button type="button" onclick="closeRegisterModal()"
+                        class="px-4 py-2 rounded-lg bg-slate-100 text-slate-600 text-xs font-semibold hover:bg-slate-200">
+                        Hủy
+                    </button>
+
+                    <button type="submit"
+                        class="px-5 py-2 rounded-lg bg-red-600 text-white text-xs font-bold hover:bg-red-700 shadow-md">
+                        Gửi Đăng Ký
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-xl text-xs sm:text-sm flex items-center gap-2 opacity-0 transition-opacity duration-300 pointer-events-none border border-slate-700">
+    <!-- Toast -->
+    <div id="toast"
+        class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[100] bg-slate-900 text-white px-5 py-3 rounded-xl shadow-xl text-xs sm:text-sm flex items-center gap-2 opacity-0 transition-opacity duration-300 pointer-events-none border border-slate-700">
         <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400"></i>
         <span id="toastMsg">Đã sao chép nội dung thư!</span>
     </div>
 
     <script>
-        /* Web Audio API Sound Synthesizer (No external asset dependency) */
+        // ============================
+        // SOUND EFFECT
+        // ============================
         class SoundFX {
             constructor() {
                 this.ctx = null;
@@ -447,8 +547,17 @@
 
             init() {
                 if (!this.ctx) {
-                    const AudioContext = window.AudioContext || window.webkitAudioContext;
-                    this.ctx = new AudioContext();
+                    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+
+                    if (!AudioContextClass) {
+                        return;
+                    }
+
+                    this.ctx = new AudioContextClass();
+                }
+
+                if (this.ctx.state === 'suspended') {
+                    this.ctx.resume();
                 }
             }
 
@@ -456,10 +565,11 @@
                 this.init();
                 if (!this.ctx) return;
 
-                // White noise buffer for paper rustle sound
-                const bufferSize = this.ctx.sampleRate * 0.3;
+                const duration = 0.3;
+                const bufferSize = Math.floor(this.ctx.sampleRate * duration);
                 const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
                 const data = buffer.getChannelData(0);
+
                 for (let i = 0; i < bufferSize; i++) {
                     data[i] = Math.random() * 2 - 1;
                 }
@@ -474,7 +584,10 @@
 
                 const gain = this.ctx.createGain();
                 gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.3);
+                gain.gain.exponentialRampToValueAtTime(
+                    0.01,
+                    this.ctx.currentTime + duration
+                );
 
                 noise.connect(filter);
                 filter.connect(gain);
@@ -487,53 +600,60 @@
                 this.init();
                 if (!this.ctx) return;
 
-                const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                const notes = [523.25, 659.25, 783.99, 1046.50];
+
                 notes.forEach((freq, idx) => {
+                    const start = this.ctx.currentTime + idx * 0.08;
+
                     const osc = this.ctx.createOscillator();
                     const gain = this.ctx.createGain();
 
                     osc.type = 'sine';
-                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime + idx * 0.08);
+                    osc.frequency.setValueAtTime(freq, start);
 
-                    gain.gain.setValueAtTime(0.08, this.ctx.currentTime + idx * 0.08);
-                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + idx * 0.08 + 0.8);
+                    gain.gain.setValueAtTime(0.08, start);
+                    gain.gain.exponentialRampToValueAtTime(0.001, start + 0.8);
 
                     osc.connect(gain);
                     gain.connect(this.ctx.destination);
 
-                    osc.start(this.ctx.currentTime + idx * 0.08);
-                    osc.stop(this.ctx.currentTime + idx * 0.08 + 0.8);
+                    osc.start(start);
+                    osc.stop(start + 0.8);
                 });
             }
         }
 
         const soundFX = new SoundFX();
 
-        /* Interactive Envelope States */
+        // ============================
+        // ENVELOPE
+        // ============================
         let isOpen = false;
 
         function openEnvelope() {
             if (isOpen) return;
+
             isOpen = true;
 
             const envelope = document.getElementById('envelope');
             const letterModal = document.getElementById('letterModal');
             const letterCard = document.getElementById('letterCard');
 
-            // Play SFX
             soundFX.playPaperRustle();
-            
-            // Step 1: Open flap
+
             envelope.classList.add('open');
 
-            // Step 2: Show Modal after flap flip
             setTimeout(() => {
                 soundFX.playChime();
-                letterModal.classList.remove('opacity-0', 'pointer-events-none');
+
+                letterModal.classList.remove(
+                    'opacity-0',
+                    'pointer-events-none'
+                );
+
                 letterCard.classList.remove('scale-95');
                 letterCard.classList.add('scale-100');
-                
-                // Trigger Fireworks
+
                 triggerConfetti();
             }, 700);
         }
@@ -545,7 +665,11 @@
 
             letterCard.classList.remove('scale-100');
             letterCard.classList.add('scale-95');
-            letterModal.classList.add('opacity-0', 'pointer-events-none');
+
+            letterModal.classList.add(
+                'opacity-0',
+                'pointer-events-none'
+            );
 
             setTimeout(() => {
                 envelope.classList.remove('open');
@@ -553,84 +677,170 @@
             }, 300);
         }
 
-        /* Copy Functionality */
-        function copyLetterContent() {
+        // ============================
+        // COPY LETTER
+        // ============================
+        async function copyLetterContent() {
             const textToCopy = `Kính gửi: Quý Doanh Nghiệp,
 
 Em là Trần Công Khoa, phụ trách khách hàng doanh nghiệp của Ban Tổ chức Triển lãm VietBuild.
 
-Sắp tới, VietBuild sẽ tổ chức kỳ Triển lãm Quốc tế VietBuild tại VEC- Trung tâm Triển lãm Việt Nam, Đường Cầu Tứ Liên, Đông Anh, Hà Nội., dự kiến diễn ra vào tháng 11. Em xin phép liên hệ để tìm hiểu không biết Quý Doanh Nghiệp hiện có kế hoạch tham gia các hoạt động triển lãm, xúc tiến thương mại trong năm nay không ạ?
+Sắp tới, VietBuild sẽ tổ chức kỳ Triển lãm Quốc tế VietBuild tại VEC - Trung tâm Triển lãm Việt Nam, Đường Cầu Tứ Liên, Đông Anh, Hà Nội, dự kiến diễn ra vào tháng 11 năm 2026.
+
+Em xin phép liên hệ để tìm hiểu không biết Quý Doanh Nghiệp hiện có kế hoạch tham gia các hoạt động triển lãm, xúc tiến thương mại trong năm nay không ạ?
 
 Nếu Quý Doanh Nghiệp quan tâm, em rất mong có cơ hội được trao đổi thêm và gửi đến Quý Doanh nghiệp các thông tin chi tiết về quy mô, ngành hàng trưng bày, chương trình kết nối khách hàng cũng như các chính sách hỗ trợ dành cho doanh nghiệp tham gia VietBuild sắp tới.
 
 Rất mong nhận được phản hồi từ Quý Doanh Nghiệp.
+
 Thông tin liên hệ:
-SĐT/Zalo: 0947529910
+SĐT/Zalo: 0947 529 910
 Email: congkhoa.vietbuild@gmail.com`;
 
-            // Legacy fallback for iframe clipboard support
-            const textarea = document.createElement('textarea');
-            textarea.value = textToCopy;
-            document.body.appendChild(textarea);
-            textarea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textarea);
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(textToCopy);
+                } else {
+                    const textarea = document.createElement('textarea');
+                    textarea.value = textToCopy;
+                    textarea.style.position = 'fixed';
+                    textarea.style.left = '-9999px';
 
-            showToast("Đã sao chép nội dung thư vào bộ nhớ tạm!");
+                    document.body.appendChild(textarea);
+                    textarea.focus();
+                    textarea.select();
+
+                    document.execCommand('copy');
+                    textarea.remove();
+                }
+
+                showToast('Đã sao chép nội dung thư vào bộ nhớ tạm!');
+            } catch (error) {
+                showToast('Không thể sao chép. Vui lòng thử lại!');
+            }
         }
 
-        /* Register Quick Modal Control */
+        // ============================
+        // REGISTER MODAL
+        // ============================
         function openRegisterModal() {
             const modal = document.getElementById('registerModal');
-            modal.classList.remove('opacity-0', 'pointer-events-none');
+
+            modal.classList.remove(
+                'opacity-0',
+                'pointer-events-none'
+            );
         }
 
         function closeRegisterModal() {
             const modal = document.getElementById('registerModal');
-            modal.classList.add('opacity-0', 'pointer-events-none');
+
+            modal.classList.add(
+                'opacity-0',
+                'pointer-events-none'
+            );
         }
 
         function handleFormSubmit(e) {
             e.preventDefault();
+
+            const company = document.getElementById('companyName').value.trim();
+            const phone = document.getElementById('phoneNumber').value.trim();
+            const industry = document.getElementById('industry').value.trim();
+            const email = document.getElementById('companyEmail').value.trim();
+
+            const subject = encodeURIComponent(
+                'ĐĂNG KÝ NHẬN THÔNG TIN VIETBUILD - ' + company
+            );
+
+            const body = encodeURIComponent(
+                `Kính gửi Ban Tổ chức VietBuild,
+
+Tôi/Doanh nghiệp muốn nhận thông tin về triển lãm VietBuild.
+
+Tên doanh nghiệp: ${company}
+Số điện thoại/Zalo: ${phone}
+Email: ${email || 'Chưa cung cấp'}
+Ngành hàng/Sản phẩm: ${industry || 'Chưa cung cấp'}
+
+Vui lòng liên hệ và gửi thông tin chi tiết về chương trình.
+
+Trân trọng.`
+            );
+
+            // Static website: mở ứng dụng email của khách.
+            window.location.href =
+                `mailto:congkhoa.vietbuild@gmail.com?subject=${subject}&body=${body}`;
+
             closeRegisterModal();
-            showToast("Gửi thông tin thành công! Em Khoa sẽ liên hệ ngay.");
+            showToast('Đã tạo email đăng ký. Vui lòng bấm Gửi trong ứng dụng email.');
+
             document.getElementById('regForm').reset();
         }
 
-        /* Toast Popup Function */
+        // ============================
+        // TOAST
+        // ============================
+        let toastTimer = null;
+
         function showToast(msg) {
             const toast = document.getElementById('toast');
             const toastMsg = document.getElementById('toastMsg');
-            toastMsg.innerText = msg;
-            toast.classList.remove('opacity-0', 'pointer-events-none');
+
+            toastMsg.textContent = msg;
+
+            toast.classList.remove(
+                'opacity-0',
+                'pointer-events-none'
+            );
+
             toast.classList.add('opacity-100');
 
-            setTimeout(() => {
+            clearTimeout(toastTimer);
+
+            toastTimer = setTimeout(() => {
                 toast.classList.remove('opacity-100');
-                toast.classList.add('opacity-0', 'pointer-events-none');
-            }, 3000);
+                toast.classList.add(
+                    'opacity-0',
+                    'pointer-events-none'
+                );
+            }, 3500);
         }
 
-        /* Background Golden Floating Particles Canvas */
+        // ============================
+        // BACKGROUND PARTICLES
+        // ============================
         const pCanvas = document.getElementById('particles-canvas');
         const pCtx = pCanvas.getContext('2d');
+
         let particles = [];
 
         function resizePCanvas() {
-            pCanvas.width = window.innerWidth;
-            pCanvas.height = window.innerHeight;
+            const ratio = Math.min(window.devicePixelRatio || 1, 2);
+
+            pCanvas.width = window.innerWidth * ratio;
+            pCanvas.height = window.innerHeight * ratio;
+
+            pCanvas.style.width = window.innerWidth + 'px';
+            pCanvas.style.height = window.innerHeight + 'px';
+
+            pCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
         }
+
         window.addEventListener('resize', resizePCanvas);
         resizePCanvas();
 
         class Particle {
             constructor() {
-                this.reset();
+                this.reset(true);
             }
 
-            reset() {
-                this.x = Math.random() * pCanvas.width;
-                this.y = Math.random() * pCanvas.height + pCanvas.height;
+            reset(initial = false) {
+                this.x = Math.random() * window.innerWidth;
+                this.y = initial
+                    ? Math.random() * window.innerHeight
+                    : window.innerHeight + Math.random() * 100;
+
                 this.radius = Math.random() * 2 + 0.5;
                 this.speedY = Math.random() * 1 + 0.3;
                 this.speedX = (Math.random() - 0.5) * 0.5;
@@ -641,12 +851,22 @@ Email: congkhoa.vietbuild@gmail.com`;
             update() {
                 this.y -= this.speedY;
                 this.x += this.speedX;
-                if (this.y < -10) this.reset();
+
+                if (this.y < -10) {
+                    this.reset(false);
+                }
             }
 
             draw() {
                 pCtx.beginPath();
-                pCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                pCtx.arc(
+                    this.x,
+                    this.y,
+                    this.radius,
+                    0,
+                    Math.PI * 2
+                );
+
                 pCtx.fillStyle = this.color;
                 pCtx.shadowBlur = 8;
                 pCtx.shadowColor = '#eab308';
@@ -659,84 +879,163 @@ Email: congkhoa.vietbuild@gmail.com`;
         }
 
         function animateParticles() {
-            pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
-            particles.forEach(p => {
-                p.update();
-                p.draw();
+            pCtx.clearRect(
+                0,
+                0,
+                window.innerWidth,
+                window.innerHeight
+            );
+
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
             });
+
             requestAnimationFrame(animateParticles);
         }
+
         animateParticles();
 
-        /* Confetti Fireworks Effect */
+        // ============================
+        // CONFETTI
+        // ============================
         const cCanvas = document.getElementById('confetti-canvas');
         const cCtx = cCanvas.getContext('2d');
+
         let confetti = [];
+        let confettiAnimationId = null;
 
         function resizeCCanvas() {
-            cCanvas.width = window.innerWidth;
-            cCanvas.height = window.innerHeight;
+            const ratio = Math.min(window.devicePixelRatio || 1, 2);
+
+            cCanvas.width = window.innerWidth * ratio;
+            cCanvas.height = window.innerHeight * ratio;
+
+            cCanvas.style.width = window.innerWidth + 'px';
+            cCanvas.style.height = window.innerHeight + 'px';
+
+            cCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
         }
+
         window.addEventListener('resize', resizeCCanvas);
         resizeCCanvas();
 
         class Confetto {
             constructor() {
-                this.x = cCanvas.width / 2;
-                this.y = cCanvas.height / 2;
+                this.x = window.innerWidth / 2;
+                this.y = window.innerHeight / 2;
+
                 this.size = Math.random() * 8 + 4;
+
                 const angle = Math.random() * Math.PI * 2;
                 const speed = Math.random() * 12 + 4;
+
                 this.vx = Math.cos(angle) * speed;
                 this.vy = Math.sin(angle) * speed;
+
                 this.gravity = 0.15;
                 this.friction = 0.96;
                 this.alpha = 1;
-                this.colors = ['#f59e0b', '#ef4444', '#3b82f6', '#10b981', '#fef08a'];
-                this.color = this.colors[Math.floor(Math.random() * this.colors.length)];
+
+                this.colors = [
+                    '#f59e0b',
+                    '#ef4444',
+                    '#3b82f6',
+                    '#10b981',
+                    '#fef08a'
+                ];
+
+                this.color =
+                    this.colors[
+                        Math.floor(Math.random() * this.colors.length)
+                    ];
             }
 
             update() {
                 this.vx *= this.friction;
                 this.vy *= this.friction;
                 this.vy += this.gravity;
+
                 this.x += this.vx;
                 this.y += this.vy;
+
                 this.alpha -= 0.012;
             }
 
             draw() {
                 cCtx.save();
+
                 cCtx.globalAlpha = Math.max(0, this.alpha);
                 cCtx.fillStyle = this.color;
-                cCtx.fillRect(this.x, this.y, this.size, this.size);
+
+                cCtx.fillRect(
+                    this.x,
+                    this.y,
+                    this.size,
+                    this.size
+                );
+
                 cCtx.restore();
             }
         }
 
         function triggerConfetti() {
             confetti = [];
+
+            if (confettiAnimationId) {
+                cancelAnimationFrame(confettiAnimationId);
+            }
+
             for (let i = 0; i < 90; i++) {
                 confetti.push(new Confetto());
             }
+
             animateConfetti();
         }
 
-        let confettiAnimationId = null;
         function animateConfetti() {
-            cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height);
-            confetti.forEach((c, index) => {
-                c.update();
-                c.draw();
-                if (c.alpha <= 0) confetti.splice(index, 1);
+            cCtx.clearRect(
+                0,
+                0,
+                window.innerWidth,
+                window.innerHeight
+            );
+
+            confetti.forEach(confetto => {
+                confetto.update();
+                confetto.draw();
             });
 
+            confetti = confetti.filter(
+                confetto => confetto.alpha > 0
+            );
+
             if (confetti.length > 0) {
-                confettiAnimationId = requestAnimationFrame(animateConfetti);
-            } else if (confettiAnimationId) {
-                cancelAnimationFrame(confettiAnimationId);
+                confettiAnimationId =
+                    requestAnimationFrame(animateConfetti);
+            } else {
+                confettiAnimationId = null;
+                cCtx.clearRect(
+                    0,
+                    0,
+                    window.innerWidth,
+                    window.innerHeight
+                );
             }
         }
+
+        // ============================
+        // ESC KEY
+        // ============================
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                closeRegisterModal();
+
+                if (isOpen) {
+                    closeEnvelope();
+                }
+            }
+        });
     </script>
 </body>
 </html>
